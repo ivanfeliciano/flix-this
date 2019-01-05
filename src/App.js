@@ -1,28 +1,39 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-
+import MainAppBar from './components/component_bar'
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import turquoiseTheme from './theme.js';
+import FormDialog from './components/form_dialog_new_playlist';
+import MoviesPlaylists from './components/playlists';
+import Movies from './components/movies';
+import MovieDialogDetails from './components/movie_details';
+import AddMovieForm from './components/search_movie_dialog';
 class App extends Component {
+  constructor (props) {
+    super(props);
+    this.state = {
+      addListButtonClicked : "" 
+    }
+  }
+  playListButtonHandler(params) {
+    this.setState({
+      addListButtonClicked : params
+    });
+  }
+
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      < MuiThemeProvider theme={turquoiseTheme} >
+      < MainAppBar />
+      < FormDialog />
+      < MoviesPlaylists />
+      < Movies />
+      < MovieDialogDetails />
+      < AddMovieForm />
+      </MuiThemeProvider>
     );
   }
 }
+
 
 export default App;
