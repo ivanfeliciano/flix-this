@@ -24,15 +24,20 @@ const styles = {
 
 
 class MovieDialogDetails extends React.Component {
-  state = {
-    open: true,
-  };
+  constructor (props) {
+    super(props);
+    this.state = {
+      open: true,
+      movieData : this.props.movieData, 
+    };
+  }
 
   handleClickOpen = () => {
     this.setState({ open: true });
   };
 
   handleClose = () => {
+    this.props.callbackFromParentDetails();
     this.setState({ open: false });
   };
 
@@ -48,15 +53,15 @@ class MovieDialogDetails extends React.Component {
           <Card style={styles.card}>
             <CardContent>
               <Typography variant="h5" component="h2">
-                Fight Club                
+                {this.state.movieData.title}               
               </Typography>
               <Typography style={styles.pos} color="textSecondary">
-                Rate Rotten Tomatoes
+                {this.state.movieData.rating}
               </Typography>
               <Typography component="p">
-                An insomniac office worker and a devil-may-care soapmaker form an underground fight club that evolves into something much, much more
+                {this.state.movieData.plot}
               </Typography>
-              Netflix, pelispedia, torrent
+                {this.state.movieData.platforms}
             </CardContent>
           </Card>
         </Dialog>

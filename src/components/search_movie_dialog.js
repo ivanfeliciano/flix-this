@@ -47,6 +47,7 @@ class AddMovieForm extends React.Component {
   };
 
   handleClose = () => {
+    this.props.callbackFromParent();
     this.setState({ open: false });
   };
 

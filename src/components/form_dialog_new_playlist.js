@@ -20,12 +20,8 @@ class FormDialog extends React.Component {
     };
   }
 
-  handleClickOpen = () => {
-    this.setState({ open: true });
-  };
-
-  handleClose = () => {
-    this.setState({ open: false });
+  handleClose = (event) => {
+    this.props.callbackFromParent(event);
   };
   render () {
     return (
