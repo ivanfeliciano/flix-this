@@ -5,6 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import CloseIcon from '@material-ui/icons/Close';
+import SearchIcon from '@material-ui/icons/Search';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -12,7 +13,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 const styles = {
   root: {
@@ -83,7 +84,17 @@ class AddMovieForm extends React.Component {
               type="search"
               margin="normal"
               variant="outlined"
-              multiline
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="Search"
+                    >
+                      <SearchIcon/>
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
 
             <TextField
