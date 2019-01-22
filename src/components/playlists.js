@@ -9,72 +9,13 @@ import IconButton from '@material-ui/core/IconButton';
 import LocalMoviesIcon from '@material-ui/icons/LocalMovies';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Movies from './movies';
-
-const testData = {
-  11320: {
-    1: {
-      "title": "La edad de la inocencia",
-      "desc": "Blablabla",
-    },
-    2: {
-      "title": "Eternal sunshine",
-      "desc": "Blablabla"
-    }
-  },
-  21562: {
-    1: {
-      "title": "Inherent vice",
-      "desc": "Blablabla",
-    },
-    2: {
-      "title": "boogie nights",
-      "desc": "Blablabla"
-    }
-  },
-  31532: {
-    1: {
-      "title": "suspiria",
-      "desc": "Blablabla",
-    },
-    2: {
-      "title": "Mandy",
-      "desc": "Blablabla"
-    }
-  },
-  4876: {
-    1: {
-      "title": "Harry potter",
-      "desc": "Blablabla",
-    },
-    2: {
-      "title": "El tigre y el dragón",
-      "desc": "Blablabla"
-    }
-  }
-}
+import firebase from  './Firebase/firebase';
 
 class MoviesPlaylists extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      playlistsFromFirebase: {
-        11320: {
-          "title": "Ton's qué mami",
-          "desc": "Pelis pa verlas con la jainita"
-        },
-        21562: {
-          "title": "Aburridas o muy chidas",
-          "desc": "Pelis de Paul Thomas Anderson"
-        },
-        31532: {
-          "title": "Wirdos",
-          "desc": "Peliculas como el ojo de Thom Yorke"
-        },
-        4876: {
-          "title": "Random",
-          "desc": "Películas para apagar el cerebro"
-        }
-      },
+      playlistsInfo: [],
       deleteMovie : false,
       moviesListSelected : false,
       playlistIdSelected : null,
@@ -97,20 +38,29 @@ class MoviesPlaylists extends React.Component {
     console.log("Elimino lista: " + playListId);
   }
   
+  componentWillMount() {
+    let playlistMoviesRef = firebase.database().ref('playlists').orderByKey();
+    playlistMoviesRef.on('child_added', snapshot => {
+      let playlist = { title : snapshot.val().title, description : snapshot.val().description, id : snapshot.key };
+      this.setState({ playlistsInfo: [playlist].concat(this.state.playlistsInfo) });
+    })
+
+  }
+
   render() {
     const isDialogVisible = this.state.moviesListSelected;
-    let moviesListDialog = isDialogVisible ? <Movies playlistData={testData[this.state.playlistIdSelected]} callbackFromParent={() => this.setState({ moviesListSelected: false })} /> : null;
+    let moviesListDialog = isDialogVisible ? <Movies playlistData={this.state.playlistIdSelected} callbackFromParent={() => this.setState({ moviesListSelected: false })} /> : null;
     return (
       <div>
         <List>
-            {Object.keys(this.state.playlistsFromFirebase).map((key) => 
-              <ListItem button onClick = {() => this.onMovieListClick(key)} key={key}>
+            {Object.keys(this.state.playlistsInfo).map((key) => 
+              <ListItem button onClick={() => this.onMovieListClick(this.state.playlistsInfo[key].id)} key={this.state.playlistsInfo[key].id}>
                 <ListItemAvatar>
                   <Avatar>
                     <LocalMoviesIcon/>
                   </Avatar>
                 </ListItemAvatar> 
-                <ListItemText primary = {this.state.playlistsFromFirebase[key].title} secondary = {this.state.playlistsFromFirebase[key].desc} /> 
+                <ListItemText primary = {this.state.playlistsInfo[key].title} secondary = {this.state.playlistsInfo[key].description} /> 
               <ListItemSecondaryAction>
                 <IconButton aria-label="Delete" onClick={() => this.onDeleteMovieClick(key)}>
                   <DeleteIcon />

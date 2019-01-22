@@ -17,6 +17,7 @@ import AppBar from '@material-ui/core/AppBar';
 import CloseIcon from '@material-ui/icons/Close';
 import AddMovieForm from './search_movie_dialog';
 import MovieDialogDetails from './movie_details';
+import firebase from './Firebase/firebase';
 
 const styles = {
   button: {
@@ -35,30 +36,16 @@ const styles = {
   },
 };
 
-const testData = {
-  1 : {
-    title: "Title Movie 1",
-    plot: "Plot Movie 1",
-    rating: "90%",
-    platforms: "Netflix, torrent, pelispedia, cuevana2",
-  },
-  2 : {
-    title: "Title Movie 2",
-    plot: "Plot Movie 2",
-    rating: "90%",
-    platforms: "Netflix, torrent, pelispedia, cuevana2",
-  }
-}
-
 class Movies extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       open: true,
-      playlistData : this.props.playlistData,
+      playlistDataId : this.props.playlistData,
       newMovieFormDialogVisible : false,
       movieDetailsVisible : false,
       movieSelected: null,
+      playlistData: [],
     };
     this.onMovieClick = this.onMovieClick.bind(this);
     this.onDoneMovieClick = this.onDoneMovieClick.bind(this);
@@ -84,11 +71,19 @@ class Movies extends React.Component {
     this.setState({newMovieFormDialogVisible : true});
   }
 
+  componentWillMount() {
+    let moviesListRef = firebase.database().ref('moviesInfoByListId/' + this.state.playlistDataId).orderByKey();
+    moviesListRef.on('child_added', snapshot => {
+      let movie = { title: snapshot.val().title, description: snapshot.val().description, id: snapshot.key };
+      this.setState({ playlistData: [movie].concat(this.state.playlistData) });
+    })
+  }
+
 	render() {
     const isAddNewMovieDialogVisible = this.state.newMovieFormDialogVisible;
     const isMovieDetailsVisible = this.state.movieDetailsVisible;
     let newMovieDialog = isAddNewMovieDialogVisible ? <AddMovieForm callbackFromParent={() => this.setState({ newMovieFormDialogVisible: false })} /> : null;
-    let movieDetailsDialog = isMovieDetailsVisible ? <MovieDialogDetails movieData={testData[this.state.movieSelected]} callbackFromParentDetails={() => this.setState({ movieDetailsVisible: false })} /> : null;
+    let movieDetailsDialog = isMovieDetailsVisible ? <MovieDialogDetails movieData={this.state.movieSelected} callbackFromParentDetails={() => this.setState({ movieDetailsVisible: false })} /> : null;
     return (
       <div>
         <Dialog fullScreen open={this.state.open} onClose={this.handleClose}>
@@ -104,15 +99,15 @@ class Movies extends React.Component {
           </AppBar>
           <List>
             {Object.keys(this.state.playlistData).map((key) => 
-              <ListItem button onClick={() => this.onMovieClick(key)} key={key}>
+              <ListItem button onClick={() => this.onMovieClick(this.state.playlistData[key].id)} key={this.state.playlistData[key].id}>
                 <ListItemAvatar>
                   <Avatar>
                     <LocalPlayIcon />
                   </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={this.state.playlistData[key].title} secondary={this.state.playlistData[key].desc} />
+                <ListItemText primary={this.state.playlistData[key].title} secondary={this.state.playlistData[key].description} />
                 <ListItemSecondaryAction>
-                  <IconButton aria-label="Check" onClick={() => this.onDoneMovieClick(key)}>
+                  <IconButton aria-label="Check" onClick={() => this.onDoneMovieClick(this.state.playlistData[key].id)}>
                     <CheckIcon/>
                   </IconButton>
                 </ListItemSecondaryAction>

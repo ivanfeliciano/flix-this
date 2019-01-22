@@ -3,6 +3,7 @@ import Dialog from '@material-ui/core/Dialog';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import firebase from './Firebase/firebase';
 
 const styles = {
   card: {
@@ -28,7 +29,8 @@ class MovieDialogDetails extends React.Component {
     super(props);
     this.state = {
       open: true,
-      movieData : this.props.movieData, 
+      movieDataId : this.props.movieData, 
+      movieData : [], 
     };
   }
 
@@ -41,6 +43,16 @@ class MovieDialogDetails extends React.Component {
     this.setState({ open: false });
   };
 
+  componentWillMount() {
+    let movieRef = firebase.database().ref('movies/' + this.state.movieDataId);
+    movieRef.once('value', snapshot => {
+      let movie = { title: snapshot.val().title, plot: snapshot.val().plot, id: snapshot.key, rating : snapshot.val().rating, platforms : 
+        snapshot.val().platforms};
+      this.setState({ movieData: movie });
+      console.log("Movie");
+      console.log(movie);
+    });
+  }
   render() {
     return (
       <div>
@@ -53,7 +65,7 @@ class MovieDialogDetails extends React.Component {
           <Card style={styles.card}>
             <CardContent>
               <Typography variant="h5" component="h2">
-                {this.state.movieData.title}               
+                {this.state.movieData.title}
               </Typography>
               <Typography style={styles.pos} color="textSecondary">
                 {this.state.movieData.rating}
