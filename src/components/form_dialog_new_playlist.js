@@ -6,6 +6,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import firebase from './Firebase/firebase';
 
 function Transition(props) {
   return <Slide direction="up" {...props} />;
@@ -16,13 +17,31 @@ class FormDialog extends React.Component {
     super(props);
     this.state = {
       dialogTitle : "Create new playlist",
-      open : true
+      open : true,
+      listTitle : "",
+      listDesc : "",
     };
+    this.submitNewPlaylist = this.submitNewPlaylist.bind(this);
   }
 
   handleClose = (event) => {
     this.props.callbackFromParent(event);
   };
+
+  handleTextFieldTitle(event) {
+    this.setState({ listTitle : event.target.value });
+  }
+  
+  handleTextFieldDesc(event) {
+    this.setState({ listDesc: event.target.value });
+  }
+  submitNewPlaylist(event) {
+    event.preventDefault();
+    console.log(this.state.listTitle);
+    console.log(this.state.listDesc);
+    // firebase.database().ref()
+    this.props.callbackFromParent(event);
+  }
   render () {
     return (
       <Dialog
@@ -50,6 +69,8 @@ class FormDialog extends React.Component {
               InputLabelProps={{
                 shrink: true,
               }}
+              value={this.state.listTitle}
+              onChange={(event) => this.handleTextFieldTitle(event)}
             />
             <TextField
               id="playlist-des-input"
@@ -62,13 +83,15 @@ class FormDialog extends React.Component {
               InputLabelProps={{
                 shrink: true,
               }}
+              value={this.state.listDesc}
+              onChange={(event) => this.handleTextFieldDesc(event)}
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="inherit">
               Cancel
             </Button>
-            <Button onClick={this.handleClose} color="inherit">
+            <Button onClick={this.submitNewPlaylist} color="inherit">
               Create
             </Button>
           </DialogActions>
