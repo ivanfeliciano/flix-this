@@ -24,3 +24,4 @@ yarn-error.log*
 
 # CONFIG Object
 /src/components/Firebase/config.js
+/src/components/keys.js

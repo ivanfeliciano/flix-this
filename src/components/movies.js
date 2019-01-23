@@ -82,7 +82,7 @@ class Movies extends React.Component {
 	render() {
     const isAddNewMovieDialogVisible = this.state.newMovieFormDialogVisible;
     const isMovieDetailsVisible = this.state.movieDetailsVisible;
-    let newMovieDialog = isAddNewMovieDialogVisible ? <AddMovieForm callbackFromParent={() => this.setState({ newMovieFormDialogVisible: false })} /> : null;
+    let newMovieDialog = isAddNewMovieDialogVisible ? <AddMovieForm playlistId={this.state.playlistDataId} callbackFromParent={() => this.setState({ newMovieFormDialogVisible: false })} /> : null;
     let movieDetailsDialog = isMovieDetailsVisible ? <MovieDialogDetails movieData={this.state.movieSelected} callbackFromParentDetails={() => this.setState({ movieDetailsVisible: false })} /> : null;
     return (
       <div>

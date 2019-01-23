@@ -67,9 +67,6 @@ class MovieDialogDetails extends React.Component {
               <Typography variant="h5" component="h2">
                 {this.state.movieData.title}
               </Typography>
-              <Typography style={styles.pos} color="textSecondary">
-                {this.state.movieData.rating}
-              </Typography>
               <Typography component="p">
                 {this.state.movieData.plot}
               </Typography>

@@ -36,6 +36,8 @@ class MoviesPlaylists extends React.Component {
 
   onDeleteMovieClick (playListId) {
     console.log("Elimino lista: " + playListId);
+    firebase.database().ref('playlists/' + playListId).set(null);
+    firebase.database().ref('moviesInfoByListId/' + playListId).set(null);
   }
   
   componentWillMount() {
@@ -44,7 +46,6 @@ class MoviesPlaylists extends React.Component {
       let playlist = { title : snapshot.val().title, description : snapshot.val().description, id : snapshot.key };
       this.setState({ playlistsInfo: [playlist].concat(this.state.playlistsInfo) });
     })
-
   }
 
   render() {
@@ -62,7 +63,7 @@ class MoviesPlaylists extends React.Component {
                 </ListItemAvatar> 
                 <ListItemText primary = {this.state.playlistsInfo[key].title} secondary = {this.state.playlistsInfo[key].description} /> 
               <ListItemSecondaryAction>
-                <IconButton aria-label="Delete" onClick={() => this.onDeleteMovieClick(key)}>
+                <IconButton aria-label="Delete" onClick={() => this.onDeleteMovieClick(this.state.playlistsInfo[key].id)}>
                   <DeleteIcon />
                 </IconButton>
               </ListItemSecondaryAction> 

@@ -37,9 +37,7 @@ class FormDialog extends React.Component {
   }
   submitNewPlaylist(event) {
     event.preventDefault();
-    console.log(this.state.listTitle);
-    console.log(this.state.listDesc);
-    // firebase.database().ref()
+    firebase.database().ref('playlists').push({title : this.state.listTitle, description: this.state.listDesc});
     this.props.callbackFromParent(event);
   }
   render () {
