@@ -37,6 +37,16 @@ const styles = {
   },
 };
 
+
+function fetchWithTimeout (url, options, timeout = 7000) {
+  return Promise.race([
+    fetch(url, options),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('timeout')), timeout)
+    )
+  ]);
+}
+
 class AddMovieForm extends React.Component {
   constructor(props) {
     super(props);
@@ -104,9 +114,11 @@ class AddMovieForm extends React.Component {
 
   makeRequest(event) {
     event.preventDefault();
+    
     let query = this.state.queryMovieTitle;
     query = query.split(" ").join("+")
-    fetch("http://www.omdbapi.com/?t=" + query+ "&apikey=" + OMDB_KEY)
+    console.log("query movie " + query);
+    fetchWithTimeout("https://www.omdbapi.com/?t=" + query+ "&apikey=" + OMDB_KEY, null, 2500)
       .then(res => res.json())
       .then(
         (result) => {

@@ -49,8 +49,8 @@ class MovieDialogDetails extends React.Component {
       let movie = { title: snapshot.val().title, plot: snapshot.val().plot, id: snapshot.key, rating : snapshot.val().rating, platforms : 
         snapshot.val().platforms};
       this.setState({ movieData: movie });
-      console.log("Movie");
-      console.log(movie);
+      // console.log("Movie");
+      // console.log(movie);
     });
   }
   render() {

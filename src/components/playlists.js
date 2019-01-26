@@ -30,12 +30,12 @@ class MoviesPlaylists extends React.Component {
   }
 
   onMovieListClick (playListId) {
-    console.log(playListId);
+    // console.log(playListId);
     this.setState({moviesListSelected : true, playlistIdSelected : playListId});
   }
 
   onDeleteMovieClick (playListId) {
-    console.log("Elimino lista: " + playListId);
+    // console.log("Elimino lista: " + playListId);
     firebase.database().ref('playlists/' + playListId).set(null);
     firebase.database().ref('moviesInfoByListId/' + playListId).set(null);
   }
@@ -45,6 +45,12 @@ class MoviesPlaylists extends React.Component {
     playlistMoviesRef.on('child_added', snapshot => {
       let playlist = { title : snapshot.val().title, description : snapshot.val().description, id : snapshot.key };
       this.setState({ playlistsInfo: [playlist].concat(this.state.playlistsInfo) });
+    })
+    playlistMoviesRef.on('child_removed', snapshot => {
+      let tmp = this.state.playlistsInfo.filter(function (item) {
+        return item.id !== snapshot.key;
+      });
+      this.setState({ playlistsInfo : tmp });
     })
   }
 

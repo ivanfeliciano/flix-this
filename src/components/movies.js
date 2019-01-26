@@ -59,12 +59,12 @@ class Movies extends React.Component {
   };
 
   onMovieClick (movieId) {
-    console.log("Movie " + movieId + " clicked");
     this.setState({movieDetailsVisible : true, movieSelected: movieId});
   }
 
   onDoneMovieClick (movieId) {
-    console.log("Movie " + movieId + " seen it");
+    firebase.database().ref('movies/' + movieId).set(null);
+    firebase.database().ref('moviesInfoByListId/' + this.state.playlistDataId + '/' + movieId).set(null);
   }
 
   addNewMovieClick (event) {
@@ -72,10 +72,16 @@ class Movies extends React.Component {
   }
 
   componentWillMount() {
-    let moviesListRef = firebase.database().ref('moviesInfoByListId/' + this.state.playlistDataId).orderByKey();
+    let moviesListRef = firebase.database().ref('moviesInfoByListId/' + this.state.playlistDataId);
     moviesListRef.on('child_added', snapshot => {
       let movie = { title: snapshot.val().title, description: snapshot.val().description, id: snapshot.key };
       this.setState({ playlistData: [movie].concat(this.state.playlistData) });
+    })
+    moviesListRef.on('child_removed', snapshot => {
+      let tmp = this.state.playlistData.filter(function (item) {
+        return item.id !== snapshot.key;
+      });
+      this.setState({ playlistData : tmp });
     })
   }
 
